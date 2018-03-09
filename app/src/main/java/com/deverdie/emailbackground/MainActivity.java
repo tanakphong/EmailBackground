@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isOnline()) {
-//                    sendEmail3();
-                    new SendEmailTask().execute();
+                    sendEmail();
+//                    new SendEmailTask().execute();
 //                    AccountManager am = AccountManager.get(MainActivity.this);
 //                    Account[] me = am.getAccounts(); //You need to get a google account on the device, it changes if you have more than one
 //                    am.getAuthToken(me[0], "oauth2:https://mail.google.com/", null, this, new OnTokenAcquired(), null);
@@ -140,33 +140,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendEmail() {
-        try {
-
-            GMailSender sender = new GMailSender(
-
-                    "neung.deverdie@gmail.com",
-
-                    "D3v@gmail");
-
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    GMailSender sender = new GMailSender(
+                            "neung.deverdie@gmail.com",
+                            "D3v@gmail");
 
 //                    sender.addAttachment(Environment.getExternalStorageDirectory().getPath()+"/image.jpg");
-
-            sender.sendMail("Test mail", "This mail has been sent from android app along with attachment",
-
-                    "neung.deverdie@gmail.com",
-
-                    "t.phongsing@gmail.com");
-
-
-            Toast.makeText(getApplicationContext(), "Sent", Toast.LENGTH_LONG).show();
-
-
-        } catch (Exception e) {
-
-            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
-
-
-        }
+                    sender.sendMail("Test mail", "This mail has been sent from android app along with attachment",
+                            "neung.deverdie@gmail.com",
+                            "t.phongsing@gmail.com");
+                    Log.i("dlg", "run: Sent");
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
+                }
+            }
+        }).start();
     }
 
     public boolean isOnline() {

@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/EmailBackground.iml" filepath="$PROJECT_DIR$/EmailBackground.iml" />
+      <module fileurl="file://D:\#NineNeung\03.CodeScript\EmailBackground\EmailBackground.iml" filepath="D:\#NineNeung\03.CodeScript\EmailBackground\EmailBackground.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://D:\#NineNeung\03.CodeScript\EmailBackground\app\app.iml" filepath="D:\#NineNeung\03.CodeScript\EmailBackground\app\app.iml" />
     </modules>
   </component>
 </project>

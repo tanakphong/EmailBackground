@@ -2,8 +2,9 @@ package com.deverdie.emailbackground.java;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.util.Log;
 import com.sun.mail.smtp.SMTPTransport;
 import com.sun.mail.util.BASE64EncoderStream;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -50,23 +52,49 @@ public class GMailSender2 {
 
         Account me = accounts[0]; //You need to get a google account on the device, it changes if you have more than one
 
-        am.getAuthToken(me, "oauth2:https://mail.google.com/", null, ctx, new AccountManagerCallback<Bundle>(){
-            @Override
-            public void run(AccountManagerFuture<Bundle> result){
-                try{
-                    Bundle bundle = result.getResult();
-                    token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-                    Log.d("initToken callback", "token="+token);
+//        am.getAuthToken(me, "oauth2:https://mail.google.com/", null, ctx, new AccountManagerCallback<Bundle>(){
+//            @Override
+//            public void run(AccountManagerFuture<Bundle> result){
+//                try{
+//                    Bundle bundle = result.getResult();
+//                    token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
+//                    Log.d("initToken callback", "token="+token);
+//
+//                } catch (Exception e){
+//                    Log.d("test", e.getMessage());
+//                }
+//            }
+//        }, null);
 
-                } catch (Exception e){
-                    Log.d("test", e.getMessage());
-                }
-            }
-        }, null);
+        try {
+            token = getAuthToken(ctx, me);
+        } catch (OperationCanceledException e) {
+            e.printStackTrace();
+        } catch (AuthenticatorException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         Log.d("getToken", "token="+token);
     }
 
+
+    public String getAuthToken(Activity activity, Account account)
+            throws OperationCanceledException, AuthenticatorException, IOException {
+        AccountManager manager = AccountManager.get(activity);
+        String token = buildToken(manager, account, activity);
+        manager.invalidateAuthToken(account.type, token);
+        return buildToken(manager, account, activity);
+    }
+
+    private String buildToken(AccountManager manager, Account account, Activity activity)
+            throws OperationCanceledException, AuthenticatorException, IOException {
+        AccountManagerFuture<Bundle> future = manager.getAuthToken(account, "ah", null, activity,
+                null, null); // ah is app engine
+        Bundle token = future.getResult();
+        return token.get(AccountManager.KEY_AUTHTOKEN).toString();
+    }
 
 
     public SMTPTransport connectToSmtp(String host, int port, String userEmail,
